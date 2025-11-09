@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  controller:
+    build: ./controller
+    env_file: .env
+    depends_on:
+      - redis
+      - ts_model
+      - sentiment_model
+    ports:
+      - "8000:8000"
+
+  ts_model:
+    build: ./ts_model
+    env_file: .env
+    ports:
+      - "8001:8000"
+
+  sentiment_model:
+    build: ./sentiment_model
+    env_file: .env
+    ports:
+      - "8002:8000"
+
+  executor:
+    build: ./executor
+    env_file: .env
+    depends_on:
+      - redis
+    restart: on-failure
